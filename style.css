@@ -1,0 +1,19 @@
+*{
+    font-family: "Noto Serif JP", serif;
+    color: #FFFFFF;
+    background: #000000;
+}
+
+h1 {
+	font-size: 4rem;
+	text-align: center;
+}
+
+p{
+    margin-top: 40px;
+}
+
+img#img01{
+    width: 60vw;
+    max-width: 10cm;
+}
