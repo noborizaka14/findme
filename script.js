@@ -7,7 +7,7 @@ const mordal = document.getElementById("mordal");
 
 const progress = [];
 
-const url = "https://script.google.com/macros/s/AKfycbwQ9wlpOjKNXLaspAPgSTs0wTCg7sUCFWnJ9kFfRyC58atqQ9Onh7fuqpUtkAussr3lLA/exec";
+const url = "https://script.google.com/macros/s/AKfycbzdUJEBiI5USRrQMKHmsi_Y1QNe4giWkjT-293-YuEsoQnYfzmBjQOP4QedBuv0XzWpZA/exec";
 const params = new URLSearchParams();
 
 async function getResponse(param){
@@ -53,33 +53,42 @@ function endMordal(){
 }
 
 const handlers = {
-    // "hello"
     "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824": async v => {
         startMordal();
         try {
             const r = await getResponse(v);
             messageText.innerText = r.message;
-        } catch (e) {
-            console.log(e);
-            messageText.innerText = "エラー: 返信取得時。";
         } finally {
             await endMordal();
         }
     },
-    // "どういうこと🫪"
     "25822b673db556891deaec02044c9c0182788d78def811e7d6d46de46309346d": async v => {
         startMordal();
         try {
             const r = await getResponse(v);
             messageText.innerText = r.message;
-        } catch (e) {
-            console.log(e);
-            messageText.innerText = "エラー: 返信取得時。";
         } finally {
             await endMordal();
         }
     },
-    // エラー処理
+    "02e75b6def98d47d873700db05e5b45643a2903e000b23bc2b67f8d42102e6e3": async v => {
+        startMordal();
+        try {
+            const r = await getResponse(v);
+            messageText.innerText = r.message;
+            const p = document.createElement("p");
+            const video = document.createElement("video");
+            const descriptionArea = document.getElementById("description-area");
+            p.innerText = r.videoMessage;
+            video.src = r.videoSrc;
+            video.controls = "true";
+            video.classList.add("video01");
+            p.appendChild(video);
+            descriptionArea.appendChild(p);
+        } finally {
+            await endMordal();
+        }
+    },
     "TOO_LONG_INPUT": async () => {
         messageText.innerText = "入力が長過ぎます。100文字以内で入力してください。"
     }
