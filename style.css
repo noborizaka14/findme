@@ -1,6 +1,6 @@
 *{
     box-sizing: border-box;
-    font-family: "Hina Mincho", serif;
+    font-family: "New Tegomin", serif;
     font-size: 24px;
     color: #FFFFFF;
     background: #000000;
@@ -40,6 +40,13 @@ h1 {
 
 p{
     margin-top: 40px;
+}
+
+.video01{
+    display: block;
+    width: 640px;
+    height: 360px;
+    margin: 2rem auto;
 }
 
 img#img01{
