@@ -1,7 +1,36 @@
 *{
-    font-family: "Noto Serif JP", serif;
+    box-sizing: border-box;
+    font-family: "Hina Mincho", serif;
+    font-size: 24px;
     color: #FFFFFF;
     background: #000000;
+}
+
+.content-area{
+    display: flex;
+    flex-direction: column;
+    margin: 0 6vw;
+    min-width: 800px;
+}
+
+.content-area > div {
+    padding: 24px 6px;
+    border-bottom: #FFFFFF 1px solid;
+}
+
+input[type="text"]{
+    font-size: 1.5rem;
+    height: 3rem;
+    width: 20em;
+    border: solid 1px #FFFFFF;
+}
+
+button{
+    font-size: 1.5rem;
+    height: 3rem;
+    border: solid 1px #FFFFFF;
+    padding: 0 1em;
+    background: #FFFFFF20;
 }
 
 h1 {
@@ -16,4 +45,19 @@ p{
 img#img01{
     width: 60vw;
     max-width: 10cm;
+}
+
+div#mordal{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    background: #FCFCDF;
+    opacity: 0.6;
+}
+
+.mordal-state{
+    overflow: hidden;
 }
