@@ -99,7 +99,7 @@ const handlers = {
                 video.controls = "true";
                 video.classList.add("video01");
                 p.appendChild(video);
-                descriptionArea.appendChild(p);
+                descriptionArea.insertAdjacentElement("afterbegin", p);
                 progress[3] = v;
             } finally {
                 await endMordal();
