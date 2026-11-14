@@ -14,7 +14,7 @@
 }
 
 .content-area > div {
-    padding: 64px 12px;
+    padding: 30px 12px;
     border-bottom: #666666 1px solid;
 }
 
@@ -25,6 +25,12 @@
 
 .input-area{
     text-align: center;
+}
+
+.message-text > img {
+    display: block;
+    width: 20em;
+    margin: 1em auto;
 }
 
 input[type="text"]{
@@ -53,11 +59,6 @@ h1 {
     width: 640px;
     height: 360px;
     margin: 2rem auto;
-}
-
-img#img01{
-    width: 60vw;
-    max-width: 10cm;
 }
 
 div#mordal{
