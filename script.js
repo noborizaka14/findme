@@ -5,9 +5,12 @@ const userInput = document.getElementById("user-input");
 const submitButton = document.getElementById("submit-button");
 const mordal = document.getElementById("mordal");
 
-const progress = [];
+let progress = [];
+// [ユーザー名, あいさつ１, あいさつ2, 要求]
+let messageTemplates = [];
+// クリック時に設定
 
-const url = "https://script.google.com/macros/s/AKfycbzdUJEBiI5USRrQMKHmsi_Y1QNe4giWkjT-293-YuEsoQnYfzmBjQOP4QedBuv0XzWpZA/exec";
+const url = "https://script.google.com/macros/s/AKfycbxL5g2UJ6v2vNnW2hBybtGPrGIujOOG3IPhgzT5BXwJXLzL-xqhkmIRpCtq0jowkHu6MQ/exec";
 const params = new URLSearchParams();
 
 async function getResponse(param){
@@ -51,46 +54,56 @@ function endMordal(){
             document.body.classList.remove("mordal-state");
         });
 }
+const fill = (t, ...args) => t.replace(/\{(\d+)\}/g, (m, i) => args[i] ?? m);
 
 const handlers = {
-    // "hello"
-    "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824": async v => {
-        startMordal();
-        try {
-            const r = await getResponse(v);
-            messageText.innerText = r.message;
-        } finally {
-            await endMordal();
+    // "こんにちは"
+    "125aeadf27b0459b8760c13a3d80912dfa8a81a68261906f60d87f4a0268646c": async v => {
+        if(progress[0]){
+            startMordal();
+            try {
+                const r = await getResponse(v);
+                messageText.innerText = fill(r.message, ...messageTemplates);
+                progress[1] = v;
+            } finally {
+                await endMordal();
+            }
         }
     },
-    // "どういうこと🫪"
-    "25822b673db556891deaec02044c9c0182788d78def811e7d6d46de46309346d": async v => {
-        startMordal();
-        try {
-            const r = await getResponse(v);
-            messageText.innerText = r.message;
-        } finally {
-            await endMordal();
+    // "ありがとう"
+    "5773be7d3dedf7cbda8a0ea503873b85d558dcbb78a636f491ed206a375eda3f": async v => {
+        if(progress[1]){
+            startMordal();
+            try {
+                const r = await getResponse(v);
+                messageText.innerText = r.message;
+                progress[2] = v;
+            } finally {
+                await endMordal();
+            }
         }
     },
     // "動画"
     "02e75b6def98d47d873700db05e5b45643a2903e000b23bc2b67f8d42102e6e3": async v => {
-        startMordal();
-        try {
-            const r = await getResponse(v);
-            messageText.innerText = r.message;
-            const p = document.createElement("p");
-            const video = document.createElement("video");
-            const descriptionArea = document.getElementById("description-area");
-            p.innerText = r.videoMessage;
-            p.classList.add("content");
-            video.src = r.videoSrc;
-            video.controls = "true";
-            video.classList.add("video01");
-            p.appendChild(video);
-            descriptionArea.appendChild(p);
-        } finally {
-            await endMordal();
+        if(progress[2]){
+            startMordal();
+            try {
+                const r = await getResponse(v);
+                messageText.innerText = r.message;
+                const p = document.createElement("p");
+                const video = document.createElement("video");
+                const descriptionArea = document.getElementById("description-area");
+                p.innerText = r.videoMessage;
+                p.classList.add("content");
+                video.src = r.videoSrc;
+                video.controls = "true";
+                video.classList.add("video01");
+                p.appendChild(video);
+                descriptionArea.appendChild(p);
+                progress[3] = v;
+            } finally {
+                await endMordal();
+            }
         }
     },
     // エラー処理
@@ -100,12 +113,16 @@ const handlers = {
 };
 
 const defaultHandler = async v => {
-    messageText.innerText = `ありがとうございます。こんにちは、${v}さん。`;
+    if(!progress[0]){
+        messageText.innerText = `ありがとうございます。こんにちは、${v}さん。`;
+        progress[0] = v;
+    }
 };
 
 submitButton.addEventListener("click", async () => {
     const inputValue = userInput.value;
     if(inputValue.length < 100){
+        messageTemplates = [progress[0], new Date().getHours(), new Date().getMinutes(), new Date().getSeconds()];
         const h = await hashText(inputValue);
         const handler = handlers[h] ?? defaultHandler;
         await handler(inputValue);
