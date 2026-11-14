@@ -39,12 +39,12 @@ async function hashText(text) {
 
 function startMordal(){
     mordal.removeAttribute("hidden");
-    mordal.animate([{opacity: "0"}, {opacity: "0.6"}], 100);
+    mordal.animate([{opacity: "0"}, {opacity: "0.4"}], 100);
     document.body.classList.add("mordal-state");
 }
 
 function endMordal(){
-    mordal.animate([{opacity: "0.6"}, {opacity: "0"}], 100)
+    mordal.animate([{opacity: "0.4"}, {opacity: "0"}], 100)
         .finished
         .then(() => {
             mordal.setAttribute("hidden", "hidden");
@@ -53,6 +53,7 @@ function endMordal(){
 }
 
 const handlers = {
+    // "hello"
     "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824": async v => {
         startMordal();
         try {
@@ -62,6 +63,7 @@ const handlers = {
             await endMordal();
         }
     },
+    // "どういうこと🫪"
     "25822b673db556891deaec02044c9c0182788d78def811e7d6d46de46309346d": async v => {
         startMordal();
         try {
@@ -71,6 +73,7 @@ const handlers = {
             await endMordal();
         }
     },
+    // "動画"
     "02e75b6def98d47d873700db05e5b45643a2903e000b23bc2b67f8d42102e6e3": async v => {
         startMordal();
         try {
@@ -80,6 +83,7 @@ const handlers = {
             const video = document.createElement("video");
             const descriptionArea = document.getElementById("description-area");
             p.innerText = r.videoMessage;
+            p.classList.add("content");
             video.src = r.videoSrc;
             video.controls = "true";
             video.classList.add("video01");
@@ -89,6 +93,7 @@ const handlers = {
             await endMordal();
         }
     },
+    // エラー処理
     "TOO_LONG_INPUT": async () => {
         messageText.innerText = "入力が長過ぎます。100文字以内で入力してください。"
     }
