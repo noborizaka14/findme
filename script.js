@@ -44,7 +44,11 @@ async function hashText(text) {
 
 submitButton.addEventListener("click", async () => {
     const inputValue = userInput.value;
-    if(inputValue.length < 100){
+    if(inputValue.length > 100){
+        const handler = handlers["TOO_LONG_INPUT"];
+        await handler(inputValue);
+    }else if(inputValue == ""){
+    }else{
         messageTemplates = [gameState.userName, new Date().getHours(), new Date().getMinutes(), new Date().getSeconds()];
         const p = document.createElement("p");
         p.innerText = inputValue;
@@ -52,9 +56,6 @@ submitButton.addEventListener("click", async () => {
         messageArea.appendChild(p);
         const h = await hashText(inputValue);
         const handler = handlers[h] ?? defaultHandler;
-        await handler(inputValue);
-    }else{
-        const handler = handlers["TOO_LONG_INPUT"];
         await handler(inputValue);
     }
 });
@@ -116,7 +117,10 @@ const handlers = {
     "02e75b6def98d47d873700db05e5b45643a2903e000b23bc2b67f8d42102e6e3": f0,
     // エラー処理
     "TOO_LONG_INPUT": async () => {
-        messageText.innerText = "入力が長過ぎます。100文字以内で入力してください。"
+        renderResponse({content: [{
+        type: "text",
+        message: "入力が長過ぎます。100文字以内で入力してください。"
+        }]}, [v]);
     }
 };
 
