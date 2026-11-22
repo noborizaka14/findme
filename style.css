@@ -1,5 +1,7 @@
 *{
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
     font-family: "New Tegomin", serif;
     font-size: 24px;
     color: #FFFFFF;
@@ -13,30 +15,27 @@
     min-width: 800px;
 }
 
-.content-area > div {
-    padding: 30px 12px;
-    border-bottom: #666666 1px solid;
-}
-
-.content {
-	border-left: 1px solid #666666;
-	padding: 24px 24px;
-}
-
-.input-area{
-    text-align: center;
+.message-area {
+	display: flex;
+	flex-direction: column;
+	padding: 24px 36px;
 }
 
 .message-item {
-	margin-right: 300px;
-	background: #434343;
-	padding: 10px;
+	background: inherit;
+	margin-top: 10px;
+	padding: 0.6em 1em;
+	align-self: start;
+	max-width: 24em;
+	border-radius: 0 0.8em 0.8em 0.8em;
+	border: solid 1px #666666;
+	overflow-wrap: anywhere;
 }
 
-.message-item-user{
-    margin-right: 0;
-    margin-left: 300px;
-    text-align: right;
+.message-item-user {
+	text-align: right;
+	align-self: end;
+	border-radius: 0.8em 0 0.8em 0.8em;
 }
 
 .message-item > img{
@@ -47,9 +46,22 @@
 
 .message-item > video{ 
     display: block;
-    width: 640px;
-    height: 360px;
-    margin: 2rem auto;
+    width: 20em;
+    margin: 1em auto;
+}
+
+.input-area {
+	text-align: center;
+	margin-top: 1.5em;
+}
+
+.description-area {
+	margin-top: 1.5em;
+}
+
+.description-area > p{
+	border-left: 1px solid #666666;
+	padding: 24px 12px;
 }
 
 input[type="text"]{
