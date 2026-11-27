@@ -3,21 +3,43 @@ const messageText = document.getElementById("message-text");
 const inputArea = document.getElementById("input-area");
 const userInput = document.getElementById("user-input");
 const submitButton = document.getElementById("submit-button");
-const mordal = document.getElementById("mordal");
+const modal = document.getElementById("modal");
 
 let gameState = {
   userName: null,
   step: "init",
 };
-let messageTemplates = [];
-// クリック時に設定
 
-const url = "https://script.google.com/macros/s/AKfycbxZW7i0etQ1UUwVkE9zNS-1FWAmiALgp3SSiPSmaLn2PP0fpLV5URuDkWAdQCJU9DfP-Q/exec";
+const validHashes = {
+    init: [
+    ],
+    name_set: [
+    // はじめまして, よろしく
+    "1a7b00c2059a05e6e47ca584d7c2e243da64e90f2d6a8b1d48489be7381ee458",
+    "60a3c0ad7844dbc5ef575766d8841aafde04c2a794b059ad0862e23211d419ee",
+    ],
+    greeted: [
+    // チャットボット, 人工無能, 対話型AI
+    "b9f7c53dd12321d0272c1ebac3b251297646d78108b76638a85d69dd67eba2a7",
+    "76f9e05b292b5a89b26f6c13bcbefaa1bfbc637c69e748d1cea623b15791c47c",
+    "068dfb601b73ee5db3ac2f1b518f2fe0937360cdfe8711e6f2da1816eec7ee8b",
+    ],
+    solved: [
+    // "動画"
+    "02e75b6def98d47d873700db05e5b45643a2903e000b23bc2b67f8d42102e6e3",
+    ]
+};
+
+let isValid = false;
+
+const url = "https://script.google.com/macros/s/AKfycbx-34DR9FCz3T-yM9wsAWGC_2dOkysmRN4KCven5X1mDzKAxayt-gOdfgCmrXGKyQtYrw/exec";
 const params = new URLSearchParams();
 
 async function getResponse(param){
     try{
         params.set("trigger", param);
+        params.set("userName", gameState.userName);
+        params.set("step", gameState.step);
         const r = await fetch(url+"?"+params, {
             method: "GET",
             headers: {
@@ -42,47 +64,74 @@ async function hashText(text) {
   return hashHex;
 }
 
+const f0 = async v => {
+    submitButton.setAttribute("disabled", "disabled");
+    startModal();
+    try {
+        const r = await getResponse(v);
+        if(gameState.userName === null) gameState.userName = r.state.userName;
+        renderResponse(r);
+    } finally {
+        await endModal();
+    }
+}
+
 submitButton.addEventListener("click", async () => {
     const inputValue = userInput.value;
-    if(inputValue.length > 100){
+    const trimmedValue = inputValue.trim();
+    if(trimmedValue.length > 100){
         const handler = handlers["TOO_LONG_INPUT"];
-        await handler(inputValue);
-    }else if(inputValue == ""){
-    }else{
-        messageTemplates = [gameState.userName, new Date().getHours(), new Date().getMinutes(), new Date().getSeconds()];
+        await handler(trimmedValue);
+    }else if(trimmedValue == ""){ return;
+    }else if(isValid){
         const p = document.createElement("p");
         p.innerText = inputValue;
         p.className = "message-item message-item-user";
         messageArea.appendChild(p);
-        const h = await hashText(inputValue);
-        const handler = handlers[h] ?? defaultHandler;
-        await handler(inputValue);
+        userInput.value = "";
+        await f0(trimmedValue);
+    }else{
     }
 });
 
-userInput.addEventListener("keydown", e => {
-    if(e.key === "Enter"){
-        submitButton.click();
+userInput.addEventListener("keydown", async e => {
+    if(e. key === "Enter") submitButton.click();
+});
+
+userInput.addEventListener("input", async () => {
+    const v = userInput.value.trim();
+    if(gameState.userName){
+        const h = await hashText(v);
+        if(validHashes[gameState.step] && validHashes[gameState.step].includes(h)){
+            isValid = true;
+            submitButton.removeAttribute("disabled");
+        }else{
+            isValid = false;
+            submitButton.setAttribute("disabled", "disabled");
+        }
+    }else{
+        isValid = true;
+        submitButton.removeAttribute("disabled");
     }
 });
 
-function startMordal(){
-    mordal.removeAttribute("hidden");
-    mordal.animate([{opacity: "0"}, {opacity: "0.4"}], 100);
-    document.body.classList.add("mordal-state");
+function startModal(){
+    modal.removeAttribute("hidden");
+    modal.style.display = "block";
+    modal.animate([{opacity: "0"}, {opacity: "0.4"}], 100);
+    document.body.classList.add("modal-state");
 }
 
-function endMordal(){
-    mordal.animate([{opacity: "0.4"}, {opacity: "0"}], 100)
+function endModal(){
+    modal.animate([{opacity: "0.4"}, {opacity: "0"}], 100)
         .finished
         .then(() => {
-            mordal.setAttribute("hidden", "hidden");
-            document.body.classList.remove("mordal-state");
+            modal.setAttribute("hidden", "hidden");
+            modal.style.display = "none";
+            document.body.classList.remove("modal-state");
         });
 }
 
-// テキスト処理と返信の取得・描画
-const fill = (t, ...args) => t.replace(/\{(\d+)\}/g, (m, i) => args[i] ?? m);
 // ターゲット要素を取得するヘルパー（id や data-target に対応）
 const findTarget = selectorOrId => {
   if (!selectorOrId) return null;
@@ -93,47 +142,8 @@ const findTarget = selectorOrId => {
   );
 }
 
-const f0 = async v => {
-    if(true){
-        startMordal();
-        try {
-            const r = await getResponse(v);
-            renderResponse(r, messageTemplates);
-        } finally {
-            await endMordal();
-        }
-    }
-}
-
-const handlers = {
-    "125aeadf27b0459b8760c13a3d80912dfa8a81a68261906f60d87f4a0268646c": f0,
-    "4427d0b0e72940e3caa881c7b21e48136cbd002b7dcd8c991a38686fabe39929": f0, 
-    "b3bec268e6aa07bbaf58b20e52eb1bede898dc214a7fbce93ccc58eaddd67686": f0,
-    "8059f43b69df9852539afc1f29b566b7f4c42992bf4394d66df37c2398729087": f0,
-    "565339bc4d33d72817b583024112eb7f5cdf3e5eef0252d6ec1b9c9a94e12bb3": f0,
-    "7b2c6e4e5f4a77b1fc265497fc360d54de4549e7d36d30425c59d1610257f859": f0,
-    "320716270511ba5406317acc3e74c2de8b29a3d6cb80883dd01598aa7d82a504": f0,
-    "2d7ab4d39c1671dc2669d1c0cc736aa276706461675242e7d353ef6b68c69158": f0,
-    "02e75b6def98d47d873700db05e5b45643a2903e000b23bc2b67f8d42102e6e3": f0,
-    // エラー処理
-    "TOO_LONG_INPUT": async () => {
-        renderResponse({content: [{
-        type: "text",
-        message: "入力が長過ぎます。100文字以内で入力してください。"
-        }]}, [v]);
-    }
-};
-
-const defaultHandler = async v => {
-    if(!gameState.userName){
-        renderResponse({content: [{type: "text", message: "こんにちは、{0}さん。"}]}, [v]);
-        gameState.userName = v;
-        gameState.step = "set name";
-    }
-};
-
 // 1. content：チャット風に流す要素を追加
-function applyContent(contentList = [], templates = []) {
+function applyContent(contentList = []) {
   for (const item of contentList) {
     if (!item || !item.type) continue;
 
@@ -141,7 +151,7 @@ function applyContent(contentList = [], templates = []) {
       const p = document.createElement("p");
       if (item.id) p.id = item.id;
       p.className = "message-item";
-      p.innerText = fill(item.message ?? "", ...templates);
+      p.innerText = item.message ?? "";
       messageArea.appendChild(p);
     } else if (item.type === "image") {
       const wrap = document.createElement("div");
@@ -175,9 +185,7 @@ function applyMutation(mutationList = []) {
     if (!m || !m.type) continue;
     const el = findTarget(m.target);
     if (!el) continue;
-
     if (m.id) el.dataset.mutationId = m.id;
-
     if (m.type === "text") {
       el.innerText = m.content ?? "";
     } else if (m.type === "src") {
@@ -196,7 +204,6 @@ function applyEffect(effectList = []) {
     if (!ef || !ef.type) continue;
     const el = ef.target ? findTarget(ef.target) : document.body;
     if (!el) continue;
-
     if (ef.type === "change-color") {
       if (ef.bgcolor !== undefined) el.style.backgroundColor = ef.bgcolor;
       if (ef.color !== undefined) el.style.color = ef.color;
@@ -213,9 +220,9 @@ function applyState(nextState) {
 }
 
 // 応答データ全体を適用するエントリーポイント
-function renderResponse(data, templates = []) {
+function renderResponse(data) {
   if (!data) return;
-  applyContent(data.content, templates);
+  applyContent(data.content);
   applyMutation(data.mutation);
   applyEffect(data.effect);
   applyState(data.state);
