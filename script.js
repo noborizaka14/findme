@@ -14,18 +14,15 @@ const validHashes = {
     init: [
     ],
     name_set: [
-    // はじめまして, よろしく
     "1a7b00c2059a05e6e47ca584d7c2e243da64e90f2d6a8b1d48489be7381ee458",
     "60a3c0ad7844dbc5ef575766d8841aafde04c2a794b059ad0862e23211d419ee",
     ],
     greeted: [
-    // チャットボット, 人工無能, 対話型AI
     "b9f7c53dd12321d0272c1ebac3b251297646d78108b76638a85d69dd67eba2a7",
     "76f9e05b292b5a89b26f6c13bcbefaa1bfbc637c69e748d1cea623b15791c47c",
     "068dfb601b73ee5db3ac2f1b518f2fe0937360cdfe8711e6f2da1816eec7ee8b",
     ],
     solved: [
-    // "動画"
     "02e75b6def98d47d873700db05e5b45643a2903e000b23bc2b67f8d42102e6e3",
     ]
 };
